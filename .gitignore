@@ -1,0 +1,12 @@
+.venv/
+venv/
+__pycache__/
+.pytest_cache/
+*.py[cod]
+mlflow_demo/.venv/
+mlflow_demo/mlflow.db
+mlflow_demo/mlruns/
+mlflow_demo/mlartifacts/
+mlflow_demo/model_version.txt
+screenshots/*
+!screenshots/.gitkeep

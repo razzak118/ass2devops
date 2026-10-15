@@ -1,0 +1,37 @@
+services:
+  app:
+    build: .
+    container_name: student-score-app
+    ports:
+      - "5100:5000"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5000/health')"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    container_name: student-score-prometheus
+    ports:
+      - "9191:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      - app
+    restart: unless-stopped
+  grafana:
+    image: grafana/grafana:11.4.0
+    container_name: student-score-grafana
+    ports:
+      - "3100:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      - prometheus
+    restart: unless-stopped
